@@ -2,7 +2,8 @@ QT += qml quick
 
 CONFIG += c++11
 CONFIG += audio
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    game.cpp
 
 RESOURCES += qml.qrc
 
@@ -17,7 +18,9 @@ DISTFILES += \
     Readme.txt
 
 HEADERS += \
-    audio.h
+    audio.h \
+    game.h \
+    enum.h
 CONFIG(audio) {
     DEFINES += AUDIO_SUPPORT
     INCLUDEPATH += include/fmod
