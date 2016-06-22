@@ -11,7 +11,7 @@ public:
 	static void play(const QString &filename, bool superpose = true);
 	static void stop();
 
-	static void playBGM(const QString &fileName);
+	static void playBGM(const QString &filename);
 	static void setBGMVolume(float volume);
 	static void stopBGM();
 

@@ -19,8 +19,12 @@ DISTFILES += \
 
 HEADERS += \
     audio.h \
-    game.h \
-    enum.h
+    game.h
+#win32-g++{
+#    DEFINES += WIN32
+#    LIBS += -L"$$_PRO_FILE_PWD_/lib/win/MinGW"
+#    DEFINES += GPP
+#}
 CONFIG(audio) {
     DEFINES += AUDIO_SUPPORT
     INCLUDEPATH += include/fmod

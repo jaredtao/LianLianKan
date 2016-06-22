@@ -1,7 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 #include <QString>
-#include "enum.h"
 
 class Game
 {
@@ -34,7 +33,7 @@ private:
 	int m_score;
 	int m_tip;
 	int m_mapwidth, m_mapheight;
-	QVector2D map;
+
 };
 
 #endif // GAME_H

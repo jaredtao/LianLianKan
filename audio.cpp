@@ -92,10 +92,10 @@ void Audio::stop()
 
 	stopBGM();
 
-	FMOD_System_Update();
+	FMOD_System_Update(System);
 }
 
-void Audio::playBGM(const QString &fileName)
+void Audio::playBGM(const QString &filename)
 {
 	FMOD_RESULT result = FMOD_System_CreateStream(System, filename.toLocal8Bit(), FMOD_LOOP_NORMAL, NULL, &BGM);
 
