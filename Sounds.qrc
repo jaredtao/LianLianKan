@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/Sounds">
+        <file>Sounds/backgrand.mp3</file>
+        <file>Sounds/pair.wav</file>
+        <file>Sounds/select.mp3</file>
+    </qresource>
+</RCC>

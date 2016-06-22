@@ -5,7 +5,9 @@ CONFIG += audio
 SOURCES += main.cpp \
     game.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+    Images.qrc \
+    Sounds.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

@@ -1,0 +1,33 @@
+<RCC>
+    <qresource prefix="/Images">
+        <file>Images/backgrand.jpg</file>
+        <file>Images/1.png</file>
+        <file>Images/2.png</file>
+        <file>Images/3.png</file>
+        <file>Images/4.png</file>
+        <file>Images/5.png</file>
+        <file>Images/6.png</file>
+        <file>Images/7.png</file>
+        <file>Images/8.png</file>
+        <file>Images/9.png</file>
+        <file>Images/10.png</file>
+        <file>Images/11.png</file>
+        <file>Images/12.png</file>
+        <file>Images/13.png</file>
+        <file>Images/14.png</file>
+        <file>Images/15.png</file>
+        <file>Images/16.png</file>
+        <file>Images/17.png</file>
+        <file>Images/18.png</file>
+        <file>Images/19.png</file>
+        <file>Images/20.png</file>
+        <file>Images/21.png</file>
+        <file>Images/22.png</file>
+        <file>Images/23.png</file>
+        <file>Images/24.png</file>
+        <file>Images/25.png</file>
+        <file>Images/icon.png</file>
+        <file>Images/exit.png</file>
+        <file>Images/backgrand.jpg</file>
+    </qresource>
+</RCC>
