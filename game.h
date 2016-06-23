@@ -24,12 +24,14 @@ public:
 	static const int MAXH = 100;
 public:
 	bool startGame();
-	void reset();
-//	bool link(int startX, int startY, int endX, int endY);
-//	bool tip(int &startX, int &startY, int &endX, int &endY);
 
-//	void random();
-//	bool needRandom();
+
+	bool link(int startX, int startY, int endX, int endY);
+	bool tip(int &startX, int &startY, int &endX, int &endY);
+	bool isWin();
+
+	void random();
+	bool needRandom();
 
 
 private:
@@ -38,10 +40,9 @@ private:
 	int m_level;				//关卡
 	int m_score;				//得分
 	int m_tip;					//提示
-	int m_mapW, m_mapH;			//map大小
+	int m_w, m_h;			//map大小
 	int map[MAXW][MAXH];		//保存地图,  0表示空白， 数字1-25表示图片
-	int mymap[MAXW][MAXH];		//
-	bool used[MAXW][MAXH];		//标记
+	bool canLink(int startX, int startY, int endX, int endY, int step, int dir);
 };
 
 #endif // GAME_H

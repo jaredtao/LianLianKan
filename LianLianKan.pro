@@ -22,11 +22,14 @@ DISTFILES += \
 HEADERS += \
     audio.h \
     game.h
-#win32-g++{
-#    DEFINES += WIN32
-#    LIBS += -L"$$_PRO_FILE_PWD_/lib/win/MinGW"
-#    DEFINES += GPP
-#}
+win32-g++{
+    DEFINES += WIN32
+    LIBS += -L"$$_PRO_FILE_PWD_/lib/win/MinGW"
+}
+linux {
+    DEFINES += LINUX
+    LIBS += -L"$$_PRO_FILE_PWD_/lib/linux/x64"
+}
 CONFIG(audio) {
     DEFINES += AUDIO_SUPPORT
     INCLUDEPATH += include/fmod
