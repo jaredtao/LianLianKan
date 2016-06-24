@@ -9,6 +9,7 @@ Game::Game()
 	m_tip = 3;
 	m_w = 6;
 	m_h = 6;
+	m_scorePerLink = 20;
 	memset(map, 0, sizeof(map));
 	qsrand(time(0));
 }
@@ -21,9 +22,9 @@ bool Game::startGame()
 	m_state = PLAYING;
 	int index = 1;
 	int ref = 0;
-
-	for (int i = 0; i < m_w; i++) {
-		for (int j = 0; j < m_h; j++) {
+	//地图下标从1开始，0 的行和列空出来，方便之后计算的时候做边界检测
+	for (int i = 1; i <= m_w; i++) {
+		for (int j = 1; j <= m_h; j++) {
 			map[i][j] = index;
 			ref++;
 			if(ref>=2) {
@@ -35,8 +36,8 @@ bool Game::startGame()
 		}
 	}
 
-	for (int i = 0 ; i < m_w; ++i) {
-		for (int j = 0; j < m_h; ++j) {
+	for (int i = 1 ; i <= m_w; ++i) {
+		for (int j = 1; j <= m_h; ++j) {
 			int x = qrand() % m_w;
 			int y = qrand() % m_h;
 			int t = map[i][j];
@@ -49,30 +50,52 @@ bool Game::startGame()
 }
 bool Game::isWin()
 {
-	for (int i = 0; i < m_w; i++) {
-		for (int j = 0; j < m_h; j++) {
+	for (int i = 1; i <= m_w; i++) {
+		for (int j = 1; j <= m_h; j++) {
 			if (map[i][j] != 0)
 				return false;
 		}
 	}
-	m_state = WIN;
 	return true;
 }
 
 
 bool Game::link(int startX, int startY, int endX, int endY)
 {
-
+	if (canLink(startX, startY, endX, endY)) {
+		map[startX][startY] = 0;
+		map[endX][endY] = 0;
+		m_score += m_scorePerLink;
+		if (isWin()) {
+			m_state = WIN;
+		}
+		return true;
+	}
+	return false;
 }
 bool Game::tip(int &startX, int &startY, int &endX, int &endY)
 {
-
+	for (startX = 1; startX <= m_w; ++startX) {
+		for (startY = 1; startY <= m_h; ++startY) {
+			for (endX = 1; endX <= m_w; ++endX) {
+				for (endY = 1; endY <= m_h; ++endY) {
+					if ((map[startX][startY] == 0) || (map[endX][endY] == 0) ||
+						(startX == endX && startY == endY) || map[startX][startY] != map[endX][endY]) {
+						continue;
+					}
+					if (map[startX][startY] == map[endX][endY])
+						return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 void Game::random()
 {
-	for (int i = 0 ; i < m_w; ++i) {
-		for (int j = 0; j < m_h; ++j) {
+	for (int i = 1 ; i <= m_w; ++i) {
+		for (int j = 1; j <= m_h; ++j) {
 			int x = qrand() % m_w;
 			int y = qrand() % m_h;
 			int t = map[i][j];
@@ -90,9 +113,82 @@ bool Game::needRandom()
 	return true;
 }
 
-const int recX[] = {0, 0, 1, -1};
-const int recY[] = {1, -1, 0, 0};
-bool Game::canLink(int startX, int startY, int endX, int endY, int step, int dir)
+bool Game::canLink(int startX, int startY, int endX, int endY)
 {
+	if (canVerOrHorLink(startX, startY, endX, endY))
+		return true;
+	if (canOneConnerLink(startX, startY, endX, endY))
+		return true;
+	if (canDoubleConnerLink(startX, startY, endX, endY))
+		return true;
+	return false;
+}
+bool Game::canVerOrHorLink(int startX, int startY, int endX, int endY)
+{
+	if ( (startX - endX == 0)&& canVerticalLink(startX, startY, endY) )
+		return true;
+	if ((startY - endY == 0) && canHorizontalLink(startY, startX, endX) )
+		return true;
+	return false;
+}
+bool Game::canVerticalLink(int X, int startY, int endY)
+{
+	int start = startY < endY ? startY : endY;
+	int end = startY + endY - start;
+	bool canLink = true;
+	for (int i = start + 1; i < end; i++) {
+		if (map[X][i] !=0) {
+			canLink = false;
+			break;
+		}
+	}
+	return canLink;
+}
+bool Game::canHorizontalLink(int Y, int startX, int endX)
+{
+	int start = startX < endX ? startX : endX;
+	int end = startX + endX - start;
+	bool canLink = true;
+	for (int i = start + 1; i < end; ++i) {
+		if ( map[i][Y] !=0) {
+			canLink = false;
+			break;
+		}
+	}
+	return canLink;
+}
 
+bool Game::canOneConnerLink(int startX, int startY, int endX, int endY)
+{
+	int x = startX;
+	int y = endY;
+	if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canVerOrHorLink(x, y, endX, endY))
+		return true;
+	x = endX;
+	y = startY;
+	if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canVerOrHorLink(x, y, endX, endY))
+		return true;
+	return false;
+}
+
+bool Game::canDoubleConnerLink(int startX, int startY, int endX, int endY)
+{
+	int x, y;
+	for (int i = 0; i <= m_w + 1; i++) {
+		if (i == startX)
+			continue;
+		x = i;
+		y = startY;
+		if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canDoubleConnerLink(x, y, endX, endY))
+			return true;
+	}
+	for (int i = 0; i <= m_h + 1; i++) {
+		if (i == startY)
+			continue;
+		x = startX;
+		y = i;
+		if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canDoubleConnerLink(x, y, endX, endY))
+			return true;
+	}
+	return false;
 }
