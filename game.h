@@ -41,18 +41,42 @@ public:
 	Q_DECLARE_FLAGS(GameDifficultys, GameDifficulty)
 	Q_FLAG(GameDifficultys)
 public:
-	bool startGame();
+	Q_INVOKABLE bool startGame();
+	Q_INVOKABLE bool link(int startX, int startY, int endX, int endY);
+	Q_INVOKABLE bool tip(int &startX, int &startY, int &endX, int &endY);
+	Q_INVOKABLE bool isWin();
+
+	Q_INVOKABLE void random();
+	Q_INVOKABLE bool needRandom();
 
 
-	bool link(int startX, int startY, int endX, int endY);
-
-	bool tip(int &startX, int &startY, int &endX, int &endY);
-
-	bool isWin();
-
-	void random();
-	bool needRandom();
-
+	enum GameState state() const;
+	void setState(GameState value);
+	enum GameDifficulty difficulty() const;
+	void setDifficulty(GameDifficulty value);
+	int level() const;
+	void setLevel(int value);
+	int score() const;
+	void setScore(int value);
+	int tip() const;
+	void setTip(int value);
+	int w() const;
+	void setW(int value);
+	int h() const;
+	void setH(int value);
+	Q_INVOKABLE void upParams()
+	{
+		emit paramsChanged();
+	}
+signals:
+	void stateChanged();
+	void difficultyChanged();
+	void levelChanged();
+	void scoreChanged();
+	void tipChanged();
+	void wChanged();
+	void hChanged();
+	void paramsChanged();
 
 private:
 	GameState m_state;			//状态
@@ -75,6 +99,7 @@ private:
 	bool canOneConnerLink(int startX, int startY, int endX, int endY);
 	//能两个拐弯连
 	bool canDoubleConnerLink(int startX, int startY, int endX, int endY);
+	GamePrivate *m_dptr;
 };
 
 #endif // GAME_H
