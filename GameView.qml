@@ -3,12 +3,19 @@ import QtQuick 2.0
 Item {
 	id:gameView
 	anchors.fill: parent
+	// Function to center the board when starting new game
+	function centerBoadr() {
+		centeringAnimation.start();
+	}
+	 // *** Background image ***
 	Image {
 		id:backgroundImage
 		source:"qrc:/Images/Images/backgrand.jpg"
-		x:0
-		y:0
+		// Make the background "parallax scrolling"
+		x: -gameView.width/8.0 - boardFlickable.contentX/4.0
+		y: -gameView.height/8.0 - boardFlickable.contentY/4.0
 	}
+	// *** Board ***
 	Flickable {
 		id: boardFlickable
 		anchors.fill: parent

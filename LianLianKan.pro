@@ -3,7 +3,8 @@ QT += qml quick
 CONFIG += c++11
 CONFIG += audio
 SOURCES += main.cpp \
-    game.cpp
+    game.cpp \
+    music.cpp
 
 RESOURCES += qml.qrc \
     Images.qrc \
@@ -21,7 +22,9 @@ DISTFILES += \
 
 HEADERS += \
     audio.h \
-    game.h
+    game.h \
+    music.h \
+    tile.h
 win32-g++{
     DEFINES += WIN32
     LIBS += -L"$$_PRO_FILE_PWD_/lib/win/MinGW"

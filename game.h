@@ -1,8 +1,11 @@
 #ifndef GAME_H
 #define GAME_H
+#include <QPoint>
 #include <QObject>
 #include <QString>
 #include <QVector>
+#include <QQmlListProperty>
+#include "tile.h"
 class GamePrivate;
 class Game : public QObject
 {
@@ -15,7 +18,7 @@ class Game : public QObject
 	Q_PROPERTY(int tip READ tip WRITE setTip NOTIFY tipChanged)
 	Q_PROPERTY(int w READ w WRITE setW NOTIFY wChanged)
 	Q_PROPERTY(int h READ h WRITE setH NOTIFY hChanged)
-
+	Q_PROPERTY(QQmlListProperty<Tile> tiles READ tiles CONSTANT)
 public:
 	Game(QObject * parent = NULL);
 	~Game();
@@ -42,9 +45,16 @@ public:
 	Q_FLAG(GameDifficultys)
 public:
 	Q_INVOKABLE bool startGame();
-	Q_INVOKABLE bool link(int startX, int startY, int endX, int endY);
+	Q_INVOKABLE bool reStart();
+	Q_INVOKABLE void pauseGame(bool);
+
+	Q_INVOKABLE bool flip(int index);
+
+
+	bool link(int startX, int startY, int endX, int endY);
 	Q_INVOKABLE bool tip(int &startX, int &startY, int &endX, int &endY);
 	Q_INVOKABLE bool isWin();
+
 
 	Q_INVOKABLE void random();
 	Q_INVOKABLE bool needRandom();
@@ -64,6 +74,9 @@ public:
 	void setW(int value);
 	int h() const;
 	void setH(int value);
+
+	QQmlListProperty<Tile> tiles();
+
 	Q_INVOKABLE void upParams()
 	{
 		emit paramsChanged();
@@ -87,6 +100,8 @@ private:
 	int m_tip;					//提示
 	int m_w, m_h;			//map大小
 	int map[MAXW][MAXH];		//保存地图,  0表示空白， 数字1-25表示图片
+	QList<QPoint> pathPoint;
+	QList<Tile *> m_tiles;
 	//能不能连
 	bool canLink(int startX, int startY, int endX, int endY);
 

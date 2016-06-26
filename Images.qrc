@@ -27,8 +27,12 @@
         <file>Images/24.png</file>
         <file>Images/25.png</file>
         <file>Images/icon.png</file>
-        <file>Images/exit.png</file>
         <file>Images/backgrand.jpg</file>
         <file>Images/back.png</file>
+        <file>Images/background.jpg</file>
+        <file>Images/close.png</file>
+        <file>Images/minimize.png</file>
+        <file>Images/tile_background.png</file>
+        <file>Images/quit.png</file>
     </qresource>
 </RCC>

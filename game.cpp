@@ -40,9 +40,10 @@ Game::~Game()
 }
 bool Game::startGame()
 {
-	if(m_state == PLAYING)
+	if(state() == PLAYING)
 		return false;
-	m_state = PLAYING;
+	setState(PLAYING);
+
 	int index = 1;
 	int ref = 0;
 	//地图下标从1开始，0 的行和列空出来，方便之后计算的时候做边界检测
@@ -71,6 +72,44 @@ bool Game::startGame()
 
 	return true;
 }
+bool Game::reStart()
+{
+	setState(PLAYING);
+
+	int index = 1;
+	int ref = 0;
+	//地图下标从1开始，0 的行和列空出来，方便之后计算的时候做边界检测
+	for (int i = 1; i <= m_w; i++) {
+		for (int j = 1; j <= m_h; j++) {
+			map[i][j] = index;
+			ref++;
+			if(ref>=2) {
+				ref = 0;
+				++index;
+				if(index > m_w * m_h)
+					index = index % (m_w * m_h);
+			}
+		}
+	}
+
+	for (int i = 1 ; i <= m_w; ++i) {
+		for (int j = 1; j <= m_h; ++j) {
+			int x = qrand() % m_w;
+			int y = qrand() % m_h;
+			int t = map[i][j];
+			map[i][j] = map[x][y];
+			map[x][y] = t;
+		}
+	}
+	return true;
+}
+void Game::pauseGame(bool v)
+{
+	if (v)
+		setState(PAUSE);
+	else
+		setState(PLAYING);
+}
 bool Game::isWin()
 {
 	for (int i = 1; i <= m_w; i++) {
@@ -90,7 +129,7 @@ bool Game::link(int startX, int startY, int endX, int endY)
 		map[endX][endY] = 0;
 		m_score += m_scorePerLink;
 		if (isWin()) {
-			m_state = WIN;
+			setState(WIN);
 		}
 		return true;
 	}
@@ -114,7 +153,10 @@ bool Game::tip(int &startX, int &startY, int &endX, int &endY)
 	}
 	return false;
 }
+bool Game::flip(int index)
+{
 
+}
 void Game::random()
 {
 	for (int i = 1 ; i <= m_w; ++i) {
@@ -138,6 +180,7 @@ bool Game::needRandom()
 
 bool Game::canLink(int startX, int startY, int endX, int endY)
 {
+	pathPoint.clear();
 	if (canVerOrHorLink(startX, startY, endX, endY))
 		return true;
 	if (canOneConnerLink(startX, startY, endX, endY))
@@ -148,8 +191,9 @@ bool Game::canLink(int startX, int startY, int endX, int endY)
 }
 bool Game::canVerOrHorLink(int startX, int startY, int endX, int endY)
 {
-	if ( (startX - endX == 0)&& canVerticalLink(startX, startY, endY) )
+	if ( (startX - endX == 0)&& canVerticalLink(startX, startY, endY) ) {
 		return true;
+	}
 	if ((startY - endY == 0) && canHorizontalLink(startY, startX, endX) )
 		return true;
 	return false;
@@ -185,12 +229,16 @@ bool Game::canOneConnerLink(int startX, int startY, int endX, int endY)
 {
 	int x = startX;
 	int y = endY;
-	if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canVerOrHorLink(x, y, endX, endY))
+	if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canVerOrHorLink(x, y, endX, endY)) {
+		pathPoint.append(QPoint(x, y));
 		return true;
+	}
 	x = endX;
 	y = startY;
-	if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canVerOrHorLink(x, y, endX, endY))
+	if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canVerOrHorLink(x, y, endX, endY)) {
+		pathPoint.append(QPoint(x, y));
 		return true;
+	}
 	return false;
 }
 
@@ -202,16 +250,20 @@ bool Game::canDoubleConnerLink(int startX, int startY, int endX, int endY)
 			continue;
 		x = i;
 		y = startY;
-		if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canDoubleConnerLink(x, y, endX, endY))
+		if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canOneConnerLink(x, y, endX, endY)) {
+			pathPoint.append(QPoint(x, y));
 			return true;
+		}
 	}
 	for (int i = 0; i <= m_h + 1; i++) {
 		if (i == startY)
 			continue;
 		x = startX;
 		y = i;
-		if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canDoubleConnerLink(x, y, endX, endY))
+		if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canOneConnerLink(x, y, endX, endY)) {
+			pathPoint.append(QPoint(x, y));
 			return true;
+		}
 	}
 	return false;
 }
@@ -302,3 +354,7 @@ void Game::setH (int value)
 	}
 }
 
+QQmlListProperty<Tile> Game::tiles()
+{
+	return QQmlListProperty<Tile>(this, m_tiles);
+}

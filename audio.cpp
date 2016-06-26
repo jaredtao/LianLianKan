@@ -72,6 +72,7 @@ void Audio::play(const QString &filename, bool superpose)
 
 	sound->play();
 }
+
 void Audio::stop()
 {
 	if (System == NULL) return ;
