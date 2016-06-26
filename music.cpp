@@ -2,6 +2,7 @@
 #include "audio.h"
 Music::Music(QObject *parent): QObject(parent)
 {
+	mute = false;
 	Audio::init();
 }
 Music::~Music()
@@ -11,7 +12,11 @@ Music::~Music()
 }
 void Music::playBGM()
 {
-	Audio::playBGM("Sounds/backgrand.mp3");
+	static bool once = false;
+	if (!once) {
+		Audio::playBGM("Sounds/backgrand.mp3");
+		once = true;
+	}
 }
 void Music::stopBGM()
 {
@@ -24,13 +29,20 @@ void Music::setBGMVolume(float volume)
 
 void Music::playLink()
 {
-	Audio::playBGM("Sounds/pair.wav");
+	if(!mute)
+		Audio::playBGM("Sounds/pair.wav");
 }
 void Music::playSelected()
 {
-	Audio::playBGM("Sounds/select.mp3");
+	if(!mute)
+		Audio::playBGM("Sounds/select.mp3");
 }
 void Music::playSelected2()
 {
-	Audio::playBGM("Sounds/select.wav");
+	if (!mute)
+		Audio::playBGM("Sounds/select.wav");
+}
+void Music::setMute(bool b)
+{
+	mute = b;
 }

@@ -18,7 +18,7 @@ Item {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
-				mainWidget.minimizeWindow();
+				mainWidget.showMinimized()
 			}
 		}
 	}
@@ -35,7 +35,7 @@ Item {
 		MouseArea {
 			anchors.fill: parent
 			onClicked: {
-				mainWidget.exitApplication();
+				mainWidget.close()
 			}
 		}
 	}
@@ -107,8 +107,56 @@ Item {
 			}
 
 			Column {
+				id:menuColum
 				width:parent.width - aboutArea.width - 10
 				spacing:10
+				Rectangle {
+					id:bgmVolumeSlider
+					width:parent.width
+					height:30
+					border.color:"gray"
+					Rectangle {
+						id:sliderLine
+						width:parent.width - 20
+						height:8
+						anchors.verticalCenter: parent.verticalCenter
+						color:"black"
+					}
+					Rectangle {
+						id:sliderRect
+						property int volume: 50
+						property int displayvalue: volume / sliderLine.width * 100
+						x:volume
+						width:12
+						height:bgmVolumeSlider.height - 2
+						color:"gray"
+						onVolumeChanged: {
+							music.setBGMVolume(volume/sliderLine.width)
+						}
+						MouseArea {
+							id:sliderMouseArea
+							property int pos: 10
+							anchors.fill: parent
+							onContainsMouseChanged: {
+								if(containsMouse)
+									pos = mouseX
+							}
+							onPositionChanged: {
+								var ret = sliderRect.volume + mouseX - pos;
+								if (0 <=ret && ret <= sliderLine.width )
+									sliderRect.volume = ret
+							}
+						}
+					}
+					Text {
+						anchors {
+							right:parent.right
+							verticalCenter: parent.verticalCenter
+						}
+						text:sliderRect.displayvalue
+					}
+				}
+
 				Button {
 					id:buttonRestart
 					text:"Restart Game"
@@ -120,22 +168,18 @@ Item {
 
 					}
 				}
-				Switch {
-					id:switchBGM
-					textOff:"BGM off"
-					textOn: "BGM On"
-					onStateChanged: {
-						if (state =="on") {
-							music.playBGM()
-						} else {
-							music.stopBGM()
-						}
-					}
-				}
+
 				Switch {
 					id: switchEffect
 					textOff:"Mute"
 					textOn:"Music"
+					onStateChanged: {
+						if (state == "on") {
+							music.setMute(false)
+						} else {
+							music.setMute(true)
+						}
+					}
 				}
 				Switch {
 					id:switch3D
@@ -145,15 +189,16 @@ Item {
 				Button {
 					id:buttonContinue
 					text: "Continue Game"
-//					disabled: {
-//						if(game.state != game.PAUSE )
-//							return false
-//						else
-//							return true
-//					}
+					//					disabled: {
+					//						if(game.state != game.PAUSE )
+					//							return false
+					//						else
+					//							return true
+					//					}
 					onClicked: {
 						menuPanel.state = "hide"
 						game.pauseGame(false)
+						music.playBGM()
 					}
 				}
 			}

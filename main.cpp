@@ -14,6 +14,8 @@ int main(int argc, char *argv[])
 	Music music;
 
 	QQuickView view;
+
+	view.rootContext()->setContextProperty("mainWidget", &view);
 	view.rootContext()->setContextProperty("game", &game);
 	view.rootContext()->setContextProperty("music", &music);
 

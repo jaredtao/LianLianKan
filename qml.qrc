@@ -4,9 +4,9 @@
         <file>GameView.qml</file>
         <file>MenuPanel.qml</file>
         <file>ControlPanel.qml</file>
-        <file>Tile.qml</file>
         <file>Frame.qml</file>
         <file>Button.qml</file>
         <file>Switch.qml</file>
+        <file>Tiles.qml</file>
     </qresource>
 </RCC>

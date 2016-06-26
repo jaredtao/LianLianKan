@@ -15,7 +15,9 @@ public:
 	Q_INVOKABLE void playLink();
 	Q_INVOKABLE void playSelected();
 	Q_INVOKABLE void playSelected2();
-
+	Q_INVOKABLE void setMute(bool b);
+private:
+	bool mute;
 };
 
 #endif // MUSIC_H

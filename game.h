@@ -4,12 +4,15 @@
 #include <QObject>
 #include <QString>
 #include <QVector>
+#include <QTimer>
 #include <QQmlListProperty>
 #include "tile.h"
 class GamePrivate;
 class Game : public QObject
 {
 	Q_OBJECT
+	Q_ENUMS(GameState)
+	Q_ENUMS(GameDifficulty)
 
 	Q_PROPERTY(GameState state READ state WRITE setState NOTIFY stateChanged)
 	Q_PROPERTY(GameDifficulty difficulty READ difficulty WRITE setDifficulty NOTIFY difficultyChanged)
@@ -19,6 +22,7 @@ class Game : public QObject
 	Q_PROPERTY(int w READ w WRITE setW NOTIFY wChanged)
 	Q_PROPERTY(int h READ h WRITE setH NOTIFY hChanged)
 	Q_PROPERTY(QQmlListProperty<Tile> tiles READ tiles CONSTANT)
+	Q_PROPERTY(int gametime READ gametime WRITE setGametime NOTIFY gametimeChanged)
 public:
 	Game(QObject * parent = NULL);
 	~Game();
@@ -27,38 +31,27 @@ public:
 	static const int MAXH = 100;
 
 	enum GameState{
-		READY = 0,		//准备
-		PLAYING,	//游戏中
-		PAUSE,		//暂停
-		WIN,		//胜利
-		LOSE		//失败
+		READY = 0,		//脳艗卤啪
+		PLAYING,	//脫脦脧路脰脨
+		PAUSE,		//脭脻脥拢
+		WIN,		//脢鈧�没
+		LOSE		//脢搂掳脺
 	};
-	Q_DECLARE_FLAGS(GameStates, GameState)
-	Q_FLAG(GameStates)
 
 	enum GameDifficulty {
-		EASY = 0,		//简单
-		MIDDLE,		//中等
-		HARD		//大师
+		EASY = 0,		//艗貌碌楼
+		MIDDLE,		//脰脨碌脠
+		HARD		//沤贸脢艩
 	};
-	Q_DECLARE_FLAGS(GameDifficultys, GameDifficulty)
-	Q_FLAG(GameDifficultys)
+
 public:
 	Q_INVOKABLE bool startGame();
 	Q_INVOKABLE bool reStart();
 	Q_INVOKABLE void pauseGame(bool);
 
-	Q_INVOKABLE bool flip(int index);
 
-
-	bool link(int startX, int startY, int endX, int endY);
-	Q_INVOKABLE bool tip(int &startX, int &startY, int &endX, int &endY);
-	Q_INVOKABLE bool isWin();
-
-
-	Q_INVOKABLE void random();
-	Q_INVOKABLE bool needRandom();
-
+	Q_INVOKABLE int flip(int index);
+	Q_INVOKABLE bool getTip();
 
 	enum GameState state() const;
 	void setState(GameState value);
@@ -75,6 +68,9 @@ public:
 	int h() const;
 	void setH(int value);
 
+	int gametime() const;
+	void setGametime(int value);
+
 	QQmlListProperty<Tile> tiles();
 
 	Q_INVOKABLE void upParams()
@@ -89,30 +85,37 @@ signals:
 	void tipChanged();
 	void wChanged();
 	void hChanged();
+	void gametimeChanged();
 	void paramsChanged();
-
+public slots:
+	void timeout();
 private:
-	GameState m_state;			//状态
-	GameDifficulty m_diffculty;	//游戏难度
-	int m_scorePerLink;			//每连一个的得分
-	int m_level;				//关卡
-	int m_score;				//得分
-	int m_tip;					//提示
-	int m_w, m_h;			//map大小
-	int map[MAXW][MAXH];		//保存地图,  0表示空白， 数字1-25表示图片
+	Tile *tile(int index) const;
+
+	bool tip(int &startX, int &startY, int &endX, int &endY);
+	bool isWin();
+
+	bool link(int startX, int startY, int endX, int endY);
+
+	void random();
+	bool needRandom();
+
+	int map[MAXW][MAXH];		//卤拢沤忙碌脴脥艗,  0卤铆脢鸥驴脮掳脳拢卢 脢媒脳脰1-25卤铆脢鸥脥艗脝卢
 	QList<QPoint> pathPoint;
 	QList<Tile *> m_tiles;
-	//能不能连
+	QPoint start, end;
+	int clicked;
+	//脛脺虏禄脛脺脕卢
 	bool canLink(int startX, int startY, int endX, int endY);
 
-	//能水平或者垂直 直连
+	//脛脺脣庐脝艙禄貌脮脽沤鹿脰卤 脰卤脕卢
 	bool canVerOrHorLink(int startX, int startY, int endX, int endY);
 	bool canVerticalLink(int X, int startY, int endY);
 	bool canHorizontalLink(int Y, int startX, int endX);
 
-	//能一个拐弯连
+	//脛脺脪禄啪枚鹿脮脥盲脕卢
 	bool canOneConnerLink(int startX, int startY, int endX, int endY);
-	//能两个拐弯连
+	//脛脺脕艙啪枚鹿脮脥盲脕卢
 	bool canDoubleConnerLink(int startX, int startY, int endX, int endY);
 	GamePrivate *m_dptr;
 };

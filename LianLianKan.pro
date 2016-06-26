@@ -9,7 +9,7 @@ SOURCES += main.cpp \
 RESOURCES += qml.qrc \
     Images.qrc \
     Sounds.qrc
-
+RC_ICONS = Images\icon.png
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
