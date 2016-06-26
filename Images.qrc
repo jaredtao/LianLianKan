@@ -29,5 +29,6 @@
         <file>Images/icon.png</file>
         <file>Images/exit.png</file>
         <file>Images/backgrand.jpg</file>
+        <file>Images/back.png</file>
     </qresource>
 </RCC>

@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>GameView.qml</file>
+        <file>MenuPanel.qml</file>
+        <file>ControlPanel.qml</file>
+        <file>Tile.qml</file>
     </qresource>
 </RCC>

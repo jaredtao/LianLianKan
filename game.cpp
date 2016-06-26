@@ -1,6 +1,27 @@
 #include "game.h"
 #include <time.h>
-Game::Game()
+class GamePrivate {
+public:
+	void init()
+	{
+		state = Game::READY;
+		difficulty = Game::EASY;
+		level = 1;
+		score = 0;
+		tip = 3;
+		w = 6;
+		h = 6;
+	}
+	Game::GameState state;
+	Game::GameDifficulty difficulty;
+	int level;
+	int score;
+	int tip;
+	int w;
+	int h;
+};
+
+Game::Game(QObject *parent): QObject(parent), m_dptr(new GamePrivate)
 {
 	m_state = READY;
 	m_diffculty = EASY;
@@ -13,7 +34,9 @@ Game::Game()
 	qsrand(time(0));
 }
 Game::~Game()
-{}
+{
+	delete m_dptr;
+}
 bool Game::startGame()
 {
 	if(m_state == PLAYING)
@@ -96,3 +119,90 @@ bool Game::canLink(int startX, int startY, int endX, int endY, int step, int dir
 {
 
 }
+
+
+enum Game::GameState Game::state () const
+{
+	return m_dptr->state;
+}
+void Game::setState (GameState value)
+{
+	if ( m_dptr->state != value) {
+		m_dptr->state = value;
+		emit stateChanged();
+		emit paramsChanged();
+	}
+}
+enum Game::GameDifficulty Game::difficulty () const
+{
+	return m_dptr->difficulty;
+}
+void Game::setDifficulty (GameDifficulty value)
+{
+	if ( m_dptr->difficulty != value) {
+		m_dptr->difficulty = value;
+		emit difficultyChanged();
+		emit paramsChanged();
+	}
+}
+int Game::level () const
+{
+	return m_dptr->level;
+}
+void Game::setLevel (int value)
+{
+	if ( m_dptr->level != value) {
+		m_dptr->level = value;
+		emit levelChanged();
+		emit paramsChanged();
+	}
+}
+int Game::score () const
+{
+	return m_dptr->score;
+}
+void Game::setScore (int value)
+{
+	if ( m_dptr->score != value) {
+		m_dptr->score = value;
+		emit scoreChanged();
+		emit paramsChanged();
+	}
+}
+int Game::tip () const
+{
+	return m_dptr->tip;
+}
+void Game::setTip (int value)
+{
+	if ( m_dptr->tip != value) {
+		m_dptr->tip = value;
+		emit tipChanged();
+		emit paramsChanged();
+	}
+}
+int Game::w () const
+{
+	return m_dptr->w;
+}
+void Game::setW (int value)
+{
+	if ( m_dptr->w != value) {
+		m_dptr->w = value;
+		emit wChanged();
+		emit paramsChanged();
+	}
+}
+int Game::h () const
+{
+	return m_dptr->h;
+}
+void Game::setH (int value)
+{
+	if ( m_dptr->h != value) {
+		m_dptr->h = value;
+		emit hChanged();
+		emit paramsChanged();
+	}
+}
+
