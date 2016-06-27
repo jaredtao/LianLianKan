@@ -1,12 +1,12 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
-        <file>GameView.qml</file>
-        <file>MenuPanel.qml</file>
-        <file>ControlPanel.qml</file>
-        <file>Frame.qml</file>
-        <file>Button.qml</file>
-        <file>Switch.qml</file>
-        <file>Tiles.qml</file>
+        <file>qml/Button.qml</file>
+        <file>qml/ControlPanel.qml</file>
+        <file>qml/Frame.qml</file>
+        <file>qml/GameView.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/MenuPanel.qml</file>
+        <file>qml/Switch.qml</file>
+        <file>qml/Tiles.qml</file>
     </qresource>
 </RCC>

@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 	view.rootContext()->setContextProperty("game", &game);
 	view.rootContext()->setContextProperty("music", &music);
 
-	view.setSource(QUrl("qrc:/main.qml"));
+	view.setSource(QUrl("qrc:/qml/main.qml"));
 	view.setResizeMode(QQuickView::SizeRootObjectToView);
 	view.setMaximumSize(QSize(800, 600));
 	view.setMinimumSize(QSize(400, 300));

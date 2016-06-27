@@ -2,29 +2,53 @@ QT += qml quick
 
 CONFIG += c++11
 CONFIG += audio
-SOURCES += main.cpp \
-    game.cpp \
-    music.cpp
 
 RESOURCES += qml.qrc \
     Images.qrc \
     Sounds.qrc
-RC_ICONS = Images\icon.png
+win32{
+    RC_ICONS = Images\icon.ico
+}
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
+
+CONFIG += precompile_header
+PRECOMPILED_HEADER = src/pch.h
+DEFINES += USING_PCH
+
 LIBS += -L.
-# Default rules for deployment.
-include(deployment.pri)
+
+INCLUDEPATH += src
+
 
 DISTFILES += \
     Readme.txt
 
+unix:!android {
+    isEmpty(target.path) {
+	qnx {
+	    target.path = /tmp/$${TARGET}/bin
+	} else {
+	    target.path = /opt/$${TARGET}/bin
+	}
+	export(target.path)
+    }
+    INSTALLS += target
+}
+
+
 HEADERS += \
-    audio.h \
-    game.h \
-    music.h \
-    tile.h
+    $$PWD/src/game.h \
+    $$PWD/src/music.h \
+    $$PWD/src/tile.h \
+    $$PWD/src/audio.h \
+    $$PWD/src/pch.h
+
+SOURCES += \
+    $$PWD/src/game.cpp \
+    $$PWD/src/main.cpp \
+    $$PWD/src/music.cpp
 win32-g++{
     DEFINES += WIN32
     LIBS += -L"$$_PRO_FILE_PWD_/lib/win/MinGW"
@@ -36,7 +60,8 @@ linux {
 CONFIG(audio) {
     DEFINES += AUDIO_SUPPORT
     INCLUDEPATH += include/fmod
+    SOURCES +=	src/audio.cpp
     CONFIG(debug, debug|release): LIBS+= -lfmodexL
     else:LIBS += -lfmodex
-    SOURCES += audio.cpp
+
 }

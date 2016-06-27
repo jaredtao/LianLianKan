@@ -164,8 +164,6 @@ Item {
 						game.reStart()
 						gameView.centerBoard()
 						menuPanel.state = "hide"
-						gameData.pauseGame(false)
-
 					}
 				}
 

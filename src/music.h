@@ -1,6 +1,5 @@
 #ifndef MUSIC_H
 #define MUSIC_H
-
 #include <QObject>
 class Music: public QObject
 {

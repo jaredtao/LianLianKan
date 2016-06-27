@@ -1,6 +1,7 @@
 #include "game.h"
 #include <time.h>
 #include <QQmlEngine>
+#include <QDebug>
 #define MAX_IMAGE (25)
 class GamePrivate {
 public:
@@ -154,7 +155,6 @@ bool Game::reStart()
 			map[i][j] = map[x][y];
 			m_tiles[ (i -1) * w() + j -1]->setValue(map[x][y]);
 			map[x][y] = t;
-
 		}
 	}
 
@@ -466,6 +466,9 @@ void Game::setH (int value)
 
 QQmlListProperty<Tile> Game::tiles()
 {
+	for (int i = 0; i != m_tiles.size(); i++) {
+		qDebug()<< __FILE__<<__LINE__<<i <<m_tiles[i]->value();
+	}
 	return QQmlListProperty<Tile>(this, m_tiles);
 }
 
