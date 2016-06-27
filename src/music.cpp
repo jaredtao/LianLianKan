@@ -30,17 +30,17 @@ void Music::setBGMVolume(float volume)
 void Music::playLink()
 {
 	if(!mute)
-		Audio::playBGM("Sounds/pair.wav");
+		Audio::play("Sounds/pair.wav");
 }
 void Music::playSelected()
 {
 	if(!mute)
-		Audio::playBGM("Sounds/select.mp3");
+		Audio::play("Sounds/select.mp3");
 }
 void Music::playSelected2()
 {
 	if (!mute)
-		Audio::playBGM("Sounds/select.wav");
+		Audio::play("Sounds/select.wav");
 }
 void Music::setMute(bool b)
 {

@@ -13,7 +13,8 @@ class Game : public QObject
 	Q_OBJECT
 	Q_ENUMS(GameState)
 	Q_ENUMS(GameDifficulty)
-
+	Q_ENUMS(FlipState)
+public:
 	Q_PROPERTY(GameState state READ state WRITE setState NOTIFY stateChanged)
 	Q_PROPERTY(GameDifficulty difficulty READ difficulty WRITE setDifficulty NOTIFY difficultyChanged)
 	Q_PROPERTY(int level READ level WRITE setLevel NOTIFY levelChanged)
@@ -27,8 +28,8 @@ public:
 	Game(QObject * parent = NULL);
 	~Game();
 
-	static const int MAXW = 100;
-	static const int MAXH = 100;
+	static const int MAXW = 15;
+	static const int MAXH = 15;
 
 	enum GameState{
 		READY = 0,		//×Œ±ž
@@ -43,14 +44,18 @@ public:
 		MIDDLE,		//ÖÐµÈ
 		HARD		//ŽóÊŠ
 	};
-
+	enum FlipState {
+		DONOT,
+		LINKED,
+		CLICK
+	};
 public:
 	Q_INVOKABLE bool startGame();
 	Q_INVOKABLE bool reStart();
 	Q_INVOKABLE void pauseGame(bool);
 
 
-	Q_INVOKABLE int flip(int index);
+	Q_INVOKABLE FlipState flip(int index);
 	Q_INVOKABLE bool getTip();
 
 	enum GameState state() const;
@@ -99,7 +104,7 @@ private:
 
 	void random();
 	bool needRandom();
-
+	void initTiles();
 	int map[MAXW][MAXH];		//±£ŽæµØÍŒ,  0±íÊŸ¿Õ°×£¬ Êý×Ö1-25±íÊŸÍŒÆ¬
 	QList<QPoint> pathPoint;
 	QList<Tile *> m_tiles;

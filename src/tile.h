@@ -1,7 +1,7 @@
 #ifndef TILE_H
 #define TILE_H
 #include <QObject>
-#include <QMetaType>
+
 class Tile: public QObject
 {
 	Q_OBJECT
@@ -12,6 +12,15 @@ public:
 	Q_PROPERTY(bool selected READ selected WRITE setSelected NOTIFY selectedChanged)
 	Q_PROPERTY(bool tiped READ tiped WRITE setTiped NOTIFY tipedChanged)
 
+	void init()
+	{
+		m_value = 0;
+		m_selected = false;
+		m_tiped = false;
+		emit valueChanged();
+		emit selectedChanged();
+		emit tipedChanged();
+	}
 	int value() const
 	{
 		return m_value;

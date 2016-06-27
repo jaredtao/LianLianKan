@@ -33,7 +33,6 @@ public:
 
 Game::Game(QObject *parent): QObject(parent), m_dptr(new GamePrivate)
 {
-	qmlRegisterType<Tile>("GameCore", 1, 0, "Tile");
 	setState(READY);
 	setDifficulty(EASY);
 	setLevel(1);
@@ -42,13 +41,43 @@ Game::Game(QObject *parent): QObject(parent), m_dptr(new GamePrivate)
 	setW(6);
 	setH(6);
 	setGametime(90);
-
+	for (int i = 0; i < w() * h(); ++i) {
+		m_tiles << new Tile;
+	}
 	memset(map, 0, sizeof(map));
 	qsrand(time(0));
+	initTiles();
 	m_dptr->timer.setInterval(1000);
 	connect(&m_dptr->timer, SIGNAL(timeout()),this, SLOT(timeout()));
 }
+void Game::initTiles()
+{
+	int index = 1;
+	int ref = 0;
+	for (int i = 1; i <= w(); i++) {
+		for (int j = 1; j <= h(); j++) {
+			map[i][j] = index;
+			ref++;
+			if(ref>=2) {
+				ref = 0;
+				++index;
+				if(index > MAX_IMAGE)
+					index = index % (MAX_IMAGE);
+			}
+		}
+	}
 
+	for (int i = 1 ; i <= w(); ++i) {
+		for (int j = 1; j <= h(); ++j) {
+			int x = qrand() % w() + 1;
+			int y = qrand() % h() + 1;
+			int t = map[i][j];
+			map[i][j] = map[x][y];
+			m_tiles[ (i -1) * h() + j -1]->setValue(map[x][y]);
+			map[x][y] = t;
+		}
+	}
+}
 Game::~Game()
 {
 	delete m_dptr;
@@ -84,32 +113,8 @@ bool Game::startGame()
 		m_tiles << new Tile;
 	}
 
-	int index = 1;
-	int ref = 0;
-	//µØÍŒÏÂ±êŽÓ1¿ªÊŒ£¬0 µÄÐÐºÍÁÐ¿Õ³öÀŽ£¬·œ±ãÖ®ºóŒÆËãµÄÊ±ºò×ö±ßœçŒì²â
-	for (int i = 1; i <= w(); i++) {
-		for (int j = 1; j <= h(); j++) {
-			map[i][j] = index;
-			ref++;
-			if(ref>=2) {
-				ref = 0;
-				++index;
-				if(index > MAX_IMAGE)
-					index = index % (MAX_IMAGE);
-			}
-		}
-	}
+	initTiles();
 
-	for (int i = 1 ; i <= w(); ++i) {
-		for (int j = 1; j <= h(); ++j) {
-			int x = qrand() % w();
-			int y = qrand() % h();
-			int t = map[i][j];
-			map[i][j] = map[x][y];
-			m_tiles[ (i -1) * h() + j -1]->setValue(map[x][y]);
-			map[x][y] = t; 
-		}
-	}
 	pauseGame(false);
 	return true;
 }
@@ -131,32 +136,7 @@ bool Game::reStart()
 	for (int i = 0; i < w() * h(); ++i) {
 		m_tiles << new Tile;
 	}
-	int index = 1;
-	int ref = 0;
-	//µØÍŒÏÂ±êŽÓ1¿ªÊŒ£¬0 µÄÐÐºÍÁÐ¿Õ³öÀŽ£¬·œ±ãÖ®ºóŒÆËãµÄÊ±ºò×ö±ßœçŒì²â
-	for (int i = 1; i <= w(); i++) {
-		for (int j = 1; j <= h(); j++) {
-			map[i][j] = index;
-			ref++;
-			if(ref>=2) {
-				ref = 0;
-				++index;
-				if(index > MAX_IMAGE)
-					index = index % (MAX_IMAGE);
-			}
-		}
-	}
-
-	for (int i = 1 ; i <= w(); ++i) {
-		for (int j = 1; j <= h(); ++j) {
-			int x = qrand() % w();
-			int y = qrand() % h();
-			int t = map[i][j];
-			map[i][j] = map[x][y];
-			m_tiles[ (i -1) * w() + j -1]->setValue(map[x][y]);
-			map[x][y] = t;
-		}
-	}
+	initTiles();
 
 	pauseGame(false);
 	return true;
@@ -189,8 +169,8 @@ bool Game::link(int startX, int startY, int endX, int endY)
 	if (canLink(startX, startY, endX, endY)) {
 		map[startX][startY] = 0;
 		map[endX][endY] = 0;
-		m_tiles[(startX - 1) * h() + startY - 1 ]->setValue(0);
-		m_tiles[(endX -1) * h() + endY - 1]->setValue(0);
+		m_tiles[(startX - 1) * h() + startY - 1 ]->init();
+		m_tiles[(endX -1) * h() + endY - 1]->init();
 		setScore(score() + m_dptr->scorePerLink);
 		if (isWin()) {
 			setState(WIN);
@@ -202,6 +182,8 @@ bool Game::link(int startX, int startY, int endX, int endY)
 		}
 		return true;
 	}
+	m_tiles[(startX - 1) * h() + startY - 1 ]->setSelected(false);
+	m_tiles[(endX -1) * h() + endY - 1]->setSelected(false);
 	return false;
 }
 bool Game::getTip()
@@ -233,33 +215,27 @@ bool Game::tip(int &startX, int &startY, int &endX, int &endY)
 	}
 	return false;
 }
-/*!
- * \brief Game::flip
- * \param index
- * \return -1 不可点
- *         0 Linked
- *         1  clicked
- */
-int Game::flip(int index)
+
+enum Game::FlipState Game::flip(int index)
 {
 	if (state() != PLAYING)
-		return -1;
+		return DONOT;
 	Tile *t = tile(index);
 	if (!t || t->value() == 0 ||  t->selected() || t->tiped())
-		return -1;
+		return DONOT;
 	++clicked;
 	t->setSelected(true);
 	if (clicked == 1) {
 		start.setX (index / h() + 1);
 		start.setY (index % h() + 1);
-		return 1;
+		return CLICK;
 	} else {
 		end.setX (index / h() + 1);
 		end.setY (index % h() + 1);
 		link(start.x(), start.y(), end.x(), end.y());
 		clicked = 0;
 		start = end =  QPoint(0, 0);
-		return 0;
+		return LINKED;
 	}
 }
 void Game::random()
@@ -301,6 +277,8 @@ bool Game::canLink(int startX, int startY, int endX, int endY)
 }
 bool Game::canVerOrHorLink(int startX, int startY, int endX, int endY)
 {
+	if (map[startX][startY] != map[endX][endY])
+		return false;
 	if ( (startX - endX == 0)&& canVerticalLink(startX, startY, endY) ) {
 		return true;
 	}
@@ -337,6 +315,8 @@ bool Game::canHorizontalLink(int Y, int startX, int endX)
 
 bool Game::canOneConnerLink(int startX, int startY, int endX, int endY)
 {
+	if (map[startX][startY] != map[endX][endY])
+		return false;
 	int x = startX;
 	int y = endY;
 	if (map[x][y] == 0 && canVerOrHorLink(x, y, startX, startY) && canVerOrHorLink(x, y, endX, endY)) {
@@ -354,6 +334,8 @@ bool Game::canOneConnerLink(int startX, int startY, int endX, int endY)
 
 bool Game::canDoubleConnerLink(int startX, int startY, int endX, int endY)
 {
+	if (map[startX][startY] != map[endX][endY])
+		return false;
 	int x, y;
 	for (int i = 0; i <= w() + 1; i++) {
 		if (i == startX)
@@ -466,9 +448,6 @@ void Game::setH (int value)
 
 QQmlListProperty<Tile> Game::tiles()
 {
-	for (int i = 0; i != m_tiles.size(); i++) {
-		qDebug()<< __FILE__<<__LINE__<<i <<m_tiles[i]->value();
-	}
 	return QQmlListProperty<Tile>(this, m_tiles);
 }
 

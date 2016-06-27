@@ -5,7 +5,7 @@ Item {
 	anchors.fill: parent
 	// Function to center the board when starting new game
 	function centerBoard() {
-		centeringAnimation.start();
+//		centeringAnimation.start();
 	}
 	 // *** Background image ***
 	Image {
@@ -52,24 +52,24 @@ Item {
 			}
 		}
 	}
-	// *** Animation to center the board ***
-	ParallelAnimation {
-		id: centeringAnimation
-		NumberAnimation {
-			target: boardFlickable
-			property: "contentX"
-			to: boardFlickable.contentWidth / 2 - boardFlickable.width / 2
-			duration: 1000
-			easing.type: Easing.InOutQuad
-		}
-		NumberAnimation {
-			target: boardFlickable
-			property: "contentY"
-			to: boardFlickable.contentHeight / 2 - boardFlickable.height / 2
-			duration: 1000
-			easing.type: Easing.InOutQuad
-		}
-	}
+//	// *** Animation to center the board ***
+//	ParallelAnimation {
+//		id: centeringAnimation
+//		NumberAnimation {
+//			target: boardFlickable
+//			property: "contentX"
+//			to: boardFlickable.contentWidth / 2 - boardFlickable.width / 2
+//			duration: 1000
+//			easing.type: Easing.InOutQuad
+//		}
+//		NumberAnimation {
+//			target: boardFlickable
+//			property: "contentY"
+//			to: boardFlickable.contentHeight / 2 - boardFlickable.height / 2
+//			duration: 1000
+//			easing.type: Easing.InOutQuad
+//		}
+//	}
 
 	ControlPanel {
 		id:controlPanel

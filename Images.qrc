@@ -33,5 +33,6 @@
         <file>Images/tile_background.png</file>
         <file>Images/quit.png</file>
         <file>Images/backgrand.jpg</file>
+        <file>Images/0.png</file>
     </qresource>
 </RCC>
