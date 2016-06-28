@@ -5,7 +5,7 @@
 #define MAX_IMAGE (25)
 class GamePrivate {
 public:
-	void init()
+	GamePrivate()
 	{
 		state = Game::READY;
 		difficulty = Game::EASY;
@@ -14,9 +14,11 @@ public:
 		tip = 3;
 		w = 6;
 		h = 6;
-		defaultTime = 90;
 		gametime = defaultTime;
+
+		defaultTime = 90;
 		scorePerLink = 10;
+		useImage = 6;
 	}
 	Game::GameState state;
 	Game::GameDifficulty difficulty;
@@ -29,52 +31,56 @@ public:
 	QTimer timer;
 	int defaultTime;
 	int scorePerLink;			//Ã¿Á¬Ò»žöµÄµÃ·Ö
+	int useImage;
 };
 
 Game::Game(QObject *parent): QObject(parent), m_dptr(new GamePrivate)
 {
-	setState(READY);
-	setDifficulty(EASY);
-	setLevel(1);
-	setScore(0);
-	setTip(3);
-	setW(6);
-	setH(6);
-	setGametime(90);
-	for (int i = 0; i < w() * h(); ++i) {
-		m_tiles << new Tile;
-	}
+	initData();
 	memset(map, 0, sizeof(map));
 	qsrand(time(0));
 	initTiles();
 	m_dptr->timer.setInterval(1000);
 	connect(&m_dptr->timer, SIGNAL(timeout()),this, SLOT(timeout()));
 }
+void Game::initData()
+{
+	m_dptr->defaultTime = 90;
+	m_dptr->scorePerLink = 10;
+	m_dptr->useImage = 6;
+	setW(6);
+	setH(6);
+	setState(READY);
+	setDifficulty(EASY);
+	setLevel(1);
+	setScore(0);
+	setTip(3);
+	setGametime(m_dptr->defaultTime );
+}
 void Game::initTiles()
 {
+	m_tiles.clear();
+	for (int i = 0; i < w() * h(); ++i) {
+		m_tiles << new Tile;
+	}
 	int index = 1;
-	int ref = 0;
-	for (int i = 1; i <= w(); i++) {
-		for (int j = 1; j <= h(); j++) {
-			map[i][j] = index;
-			ref++;
-			if(ref>=2) {
-				ref = 0;
-				++index;
-				if(index > MAX_IMAGE)
-					index = index % (MAX_IMAGE);
-			}
-		}
+	for (int i = 0; i < m_tiles.size(); i+=2 ) {
+		m_tiles[i]->setValue(index);
+		m_tiles[i+1]->setValue(index);
+		++index;
+		if(index > m_dptr->useImage)
+			index = index % (m_dptr->useImage) + 1;
 	}
 
-	for (int i = 1 ; i <= w(); ++i) {
+	for (int i = 0; i < m_tiles.size(); i++) {
+		int pos = qrand() % m_tiles.size();
+		int t = m_tiles[i]->value();
+		m_tiles[i]->setValue(m_tiles[pos]->value());
+		m_tiles[pos]->setValue(t);
+	}
+	for (int i = 1; i <= w(); ++i) {
 		for (int j = 1; j <= h(); ++j) {
-			int x = qrand() % w() + 1;
-			int y = qrand() % h() + 1;
-			int t = map[i][j];
-			map[i][j] = map[x][y];
-			m_tiles[ (i -1) * h() + j -1]->setValue(map[x][y]);
-			map[x][y] = t;
+			map[i][j] = m_tiles[ (i - 1) * w() + j - 1]->value();
 		}
 	}
 }
@@ -90,7 +96,8 @@ void Game::timeout()
 		if (!isWin())
 			setState(LOSE);
 	}
-
+	if(needRandom())
+		random();
 }
 bool Game::startGame()
 {
@@ -101,17 +108,19 @@ bool Game::startGame()
 		setH((h() + 2) % MAXH ? h() + 2 : MAXH);
 		setLevel(level() + 1);
 		m_dptr->defaultTime -= 5;
+		m_dptr->useImage++;
+		if (m_dptr->useImage > MAX_IMAGE)
+			m_dptr->useImage = MAX_IMAGE;
+
 		if (m_dptr->defaultTime <30)
 			m_dptr->defaultTime = 30;
 		setGametime(m_dptr->defaultTime);
+	} else if (state() == LOSE) {
+		initData();
 	}
 	start = end =  QPoint(0, 0);
 	clicked = 0;
 	setState(PLAYING);
-	m_tiles.clear();
-	for (int i = 0; i < w() * h(); ++i) {
-		m_tiles << new Tile;
-	}
 
 	initTiles();
 
@@ -120,25 +129,8 @@ bool Game::startGame()
 }
 bool Game::reStart()
 {
-	start = end =  QPoint(0, 0);
-	clicked = 0;
-
-	setDifficulty(EASY);
-	setLevel(1);
-	setScore(0);
-	setTip(3);
-	setW(6);
-	setH(6);
-	m_dptr->defaultTime = 90;
-	setGametime(m_dptr->defaultTime);
-	setState(PLAYING);
-	m_tiles.clear();
-	for (int i = 0; i < w() * h(); ++i) {
-		m_tiles << new Tile;
-	}
-	initTiles();
-
-	pauseGame(false);
+	setState(LOSE);
+	startGame();
 	return true;
 }
 void Game::pauseGame(bool v)
@@ -188,11 +180,14 @@ bool Game::link(int startX, int startY, int endX, int endY)
 }
 bool Game::getTip()
 {
+	if (tip() <=0)
+		return false;
 	int x1, y1, x2, y2;
 	if (tip(x1, y1, x2, y2))
 	{
-		m_tiles[ (x1 + 1) * h() + y1 + 1 ]->setTiped(true);
-		m_tiles[ (x2 + 1) * h() + y2 + 1 ]->setTiped(true);
+		m_tiles[ (x1 - 1) * h() + y1 - 1 ]->setTiped(true);
+		m_tiles[ (x2 - 1) * h() + y2 - 1 ]->setTiped(true);
+		setTip(tip() - 1);
 		return true;
 	}
 	return false;
@@ -204,7 +199,7 @@ bool Game::tip(int &startX, int &startY, int &endX, int &endY)
 			for (endX = 1; endX <= w(); ++endX) {
 				for (endY = 1; endY <= h(); ++endY) {
 					if ((map[startX][startY] == 0) || (map[endX][endY] == 0) ||
-						(startX == endX && startY == endY) || map[startX][startY] != map[endX][endY]) {
+							(startX == endX && startY == endY) || map[startX][startY] != map[endX][endY]) {
 						continue;
 					}
 					if (map[startX][startY] == map[endX][endY])
@@ -244,14 +239,16 @@ void Game::random()
 		tile->setSelected(false);
 		tile->setTiped(false);
 	}
-	for (int i = 1 ; i <= w(); ++i) {
+
+	for (int i = 0; i < m_tiles.size(); i++) {
+		int pos = qrand() % m_tiles.size();
+		int t = m_tiles[i]->value();
+		m_tiles[i]->setValue(m_tiles[pos]->value());
+		m_tiles[pos]->setValue(t);
+	}
+	for (int i = 1; i <= w(); ++i) {
 		for (int j = 1; j <= h(); ++j) {
-			int x = qrand() % w();
-			int y = qrand() % h();
-			int t = map[i][j];
-			map[i][j] = map[x][y];
-			m_tiles[ (i -1) * w() + j -1]->setValue(map[x][y]);
-			map[x][y] = t;
+			map[i][j] = m_tiles[ (i - 1) * w() + j - 1]->value();
 		}
 	}
 }
@@ -277,7 +274,7 @@ bool Game::canLink(int startX, int startY, int endX, int endY)
 }
 bool Game::canVerOrHorLink(int startX, int startY, int endX, int endY)
 {
-	if (map[startX][startY] != map[endX][endY])
+	if ( map[startX][startY]!=0 && map[endX][endY] !=0 && map[startX][startY] != map[endX][endY])
 		return false;
 	if ( (startX - endX == 0)&& canVerticalLink(startX, startY, endY) ) {
 		return true;
@@ -315,7 +312,7 @@ bool Game::canHorizontalLink(int Y, int startX, int endX)
 
 bool Game::canOneConnerLink(int startX, int startY, int endX, int endY)
 {
-	if (map[startX][startY] != map[endX][endY])
+	if (map[startX][startY] !=0 && map[endX][endY] !=0 && map[startX][startY] != map[endX][endY])
 		return false;
 	int x = startX;
 	int y = endY;

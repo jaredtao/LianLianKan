@@ -95,6 +95,7 @@ signals:
 public slots:
 	void timeout();
 private:
+	void initData();
 	Tile *tile(int index) const;
 
 	bool tip(int &startX, int &startY, int &endX, int &endY);

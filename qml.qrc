@@ -8,5 +8,6 @@
         <file>qml/MenuPanel.qml</file>
         <file>qml/Switch.qml</file>
         <file>qml/Tiles.qml</file>
+        <file>qml/ResultPanel.qml</file>
     </qresource>
 </RCC>

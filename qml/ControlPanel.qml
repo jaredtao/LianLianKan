@@ -35,7 +35,7 @@ Item {
 				text:"Score"
 			}
 			Text{
-				x:10
+				x:15
 				y:25
 				font.family: "Helvetica"
 				font.pointSize: 26

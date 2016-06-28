@@ -35,6 +35,10 @@ Item {
 			}
 		}
 	}
+	ResultPanel {
+		id:resultPanel
+		state: "hide"
+	}
 	// *** Main Menu panel ***
 	MenuPanel {
 		id: menuPanel

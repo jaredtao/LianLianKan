@@ -52,25 +52,6 @@ Item {
 			}
 		}
 	}
-//	// *** Animation to center the board ***
-//	ParallelAnimation {
-//		id: centeringAnimation
-//		NumberAnimation {
-//			target: boardFlickable
-//			property: "contentX"
-//			to: boardFlickable.contentWidth / 2 - boardFlickable.width / 2
-//			duration: 1000
-//			easing.type: Easing.InOutQuad
-//		}
-//		NumberAnimation {
-//			target: boardFlickable
-//			property: "contentY"
-//			to: boardFlickable.contentHeight / 2 - boardFlickable.height / 2
-//			duration: 1000
-//			easing.type: Easing.InOutQuad
-//		}
-//	}
-
 	ControlPanel {
 		id:controlPanel
 		anchors.right: boardFlickable.right

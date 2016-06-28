@@ -201,7 +201,6 @@ Item {
 				}
 			}
 		}
-
 	}
 	states: [
 		State{
