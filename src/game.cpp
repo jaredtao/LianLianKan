@@ -54,30 +54,49 @@ void Game::initTiles()
 {
 	int index = 1;
 	int ref = 0;
+	//tiles 赋初始值， 一次一对儿
+	for (int i = 0; i < m_tiles.size(); i+=2 ) {
+		m_tiles[i]->setValue(index);
+		m_tiles[i + 1]->setValue(index);
+		++index;
+		if(index > MAX_IMAGE)
+			index = index % (MAX_IMAGE) + 1;
+	}
+	//随机生成一个pos，做值交换
+	for (int i = 0; i < m_tiles.size(); i++) {
+		int pos = qrand() % m_tiles.size();
+		int t = m_tiles[i]->value();
+		m_tiles[i]->setValue(m_tiles[pos]->value());
+		m_tiles[pos]->setValue(t);
+	}
+
+	memset(map, 0, sizeof(map));
 	for (int i = 1; i <= w(); i++) {
 		for (int j = 1; j <= h(); j++) {
-			map[i][j] = index;
-			ref++;
-			if(ref>=2) {
-				ref = 0;
-				++index;
-				if(index > MAX_IMAGE)
-					index = index % (MAX_IMAGE);
-			}
+			map[i][j] = m_tiles[ (i - 1) * w() + j - 1]->value();
 		}
 	}
 
-	for (int i = 1 ; i <= w(); ++i) {
-		for (int j = 1; j <= h(); ++j) {
-			int x = qrand() % w() + 1;
-			int y = qrand() % h() + 1;
-			int t = map[i][j];
-			map[i][j] = map[x][y];
-			m_tiles[ (i -1) * h() + j -1]->setValue(map[x][y]);
-			map[x][y] = t;
-		}
-	}
+//	for (int i = 0 ; i < m_tiles.size(); i++) {
+//		if (i %w() == 0) printf("\n");
+//		printf("%d ", m_tiles[i]->value());
+//	}
+//	printf("\n-----------------\n");
+//	for (int i = 1; i <= w(); i++)  {
+//		for (int j = 1; j <=h();j++) {
+//			printf ("%d ", map[i][j]);
+//		}
+//		printf("\n");
+//	}
 }
+//void Game::convertIndexToMap(int index, int &x, int &y)
+//{
+
+//}
+//void Game::convertMapToIndex(int x, int y, int &index)
+//{
+
+//}
 Game::~Game()
 {
 	delete m_dptr;
@@ -87,8 +106,12 @@ void Game::timeout()
 {
 	setGametime(gametime() - 1);
 	if (gametime() == 0) {
-		if (!isWin())
+		if (!isWin()) {
 			setState(LOSE);
+		} else {
+			setState(WIN);
+		}
+		pauseGame(true);
 	}
 
 }
@@ -96,6 +119,7 @@ bool Game::startGame()
 {
 	if (state() == PLAYING)
 		return false;
+	//胜利，则进入下一关
 	if (state() == WIN) {
 		setW((w() + 2) > MAXW ? w() + 2 : MAXW);
 		setH((h() + 2) % MAXH ? h() + 2 : MAXH);
@@ -103,8 +127,8 @@ bool Game::startGame()
 		m_dptr->defaultTime -= 5;
 		if (m_dptr->defaultTime <30)
 			m_dptr->defaultTime = 30;
-		setGametime(m_dptr->defaultTime);
 	}
+
 	start = end =  QPoint(0, 0);
 	clicked = 0;
 	setState(PLAYING);
@@ -112,10 +136,10 @@ bool Game::startGame()
 	for (int i = 0; i < w() * h(); ++i) {
 		m_tiles << new Tile;
 	}
-
 	initTiles();
-
+	setGametime(m_dptr->defaultTime);
 	pauseGame(false);
+
 	return true;
 }
 bool Game::reStart()
@@ -204,7 +228,7 @@ bool Game::tip(int &startX, int &startY, int &endX, int &endY)
 			for (endX = 1; endX <= w(); ++endX) {
 				for (endY = 1; endY <= h(); ++endY) {
 					if ((map[startX][startY] == 0) || (map[endX][endY] == 0) ||
-						(startX == endX && startY == endY) || map[startX][startY] != map[endX][endY]) {
+							(startX == endX && startY == endY) || map[startX][startY] != map[endX][endY]) {
 						continue;
 					}
 					if (map[startX][startY] == map[endX][endY])
