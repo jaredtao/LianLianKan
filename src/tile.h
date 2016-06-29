@@ -1,7 +1,7 @@
 #ifndef TILE_H
 #define TILE_H
 #include <QObject>
-
+#include <QDebug>
 class Tile: public QObject
 {
 	Q_OBJECT
@@ -48,8 +48,10 @@ public:
 	}
 	void setTiped(bool v)
 	{
+		qDebug()<<__FUNCTION__;
 		if (v == m_tiped) return ;
 		m_tiped = v;
+		qDebug()<<__FUNCTION__<<v;
 		emit tipedChanged();
 	}
 signals:

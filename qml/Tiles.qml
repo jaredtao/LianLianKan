@@ -67,18 +67,17 @@ Item {
 	}
 	MouseArea {
 		anchors.fill: parent
-		enabled: ((modelData.value > 0) && (!modelData.selected))
+		enabled: ((modelData.value > 0) && (!modelData.selected) && (!modelData.tiped))
 		onClicked: {
 			var ret = game.flip(index)
-			if (ret == game.DONOT) {
+			if (ret == -1) {
 				music.playSelected()
-			} else if (ret == game.CLICK) {
+			} else if (ret == 1) {
 				music.playSelected2()
 				modelData.selected = true
-			} else if (ret == game.LINKED) {
+			} else if (ret == 0) {
 				music.playLink()
 			}
-			console.log("clicked" + ret)
 		}
 	}
 }

@@ -210,26 +210,26 @@ bool Game::tip(int &startX, int &startY, int &endX, int &endY)
 	return false;
 }
 
-enum Game::FlipState Game::flip(int index)
+int Game::flip(int index)
 {
 	if (state() != PLAYING)
-		return DONOT;
+		return -1;
 	Tile *t = tile(index);
 	if (!t || t->value() == 0 ||  t->selected() || t->tiped())
-		return DONOT;
+		return -1;
 	++clicked;
 	t->setSelected(true);
 	if (clicked == 1) {
 		start.setX (index / h() + 1);
 		start.setY (index % h() + 1);
-		return CLICK;
+		return 1;
 	} else {
 		end.setX (index / h() + 1);
 		end.setY (index % h() + 1);
 		link(start.x(), start.y(), end.x(), end.y());
 		clicked = 0;
 		start = end =  QPoint(0, 0);
-		return LINKED;
+		return 0;
 	}
 }
 void Game::random()

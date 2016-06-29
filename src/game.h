@@ -44,18 +44,21 @@ public:
 		MIDDLE,		//ÖÐµÈ
 		HARD		//ŽóÊŠ
 	};
+
 	enum FlipState {
 		DONOT,
 		LINKED,
 		CLICK
 	};
+
+
 public:
 	Q_INVOKABLE bool startGame();
 	Q_INVOKABLE bool reStart();
 	Q_INVOKABLE void pauseGame(bool);
 
 
-	Q_INVOKABLE FlipState flip(int index);
+	Q_INVOKABLE int flip(int index);
 	Q_INVOKABLE bool getTip();
 
 	enum GameState state() const;

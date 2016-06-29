@@ -171,6 +171,7 @@ Item {
 					id: switchEffect
 					textOff:"Mute"
 					textOn:"Music"
+					state:"on"
 					onStateChanged: {
 						if (state == "on") {
 							music.setMute(false)

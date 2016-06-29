@@ -6,7 +6,7 @@
 #include "game.h"
 int main(int argc, char *argv[])
 {
-				QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 	QGuiApplication app(argc, argv);
 
 
@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 	Music music;
 
 	QQuickView view;
-	view.setFlags(Qt::FramelessWindowHint);
+
 	qmlRegisterType<Tile>("GameCore", 1, 0, "Tile");
 	view.rootContext()->setContextProperty("mainWidget", &view);
 	view.rootContext()->setContextProperty("game", &game);
