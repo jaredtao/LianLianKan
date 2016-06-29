@@ -106,19 +106,8 @@ Item {
 				opacity:game.state != game.PAUSE
 				disabled: game.tip <=0
 				onClicked: {
-
+					game.getTip();
 				}
-			}
-			Text {
-				anchors.centerIn: buttonHint
-				font.family: "Helvetica"
-				font.pointSize: 42
-				smooth: true
-				color: "white"
-				style: Text.Outline
-				styleColor: "black"
-				text: "Wins!"
-				opacity: !game.state == game.WIN
 			}
 		}
 		Frame {
