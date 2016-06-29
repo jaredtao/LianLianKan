@@ -1,8 +1,10 @@
-LianLian¿´
+ï»¿è¿žè¿žçœ‹
 
-ÉùÒô
+ç‚¹å‡»ç›¸åŒçš„å›¾ç‰‡ï¼Œå°±å¯ä»¥æ¶ˆé™¤æŽ‰å®ƒä»¬ã€‚
 
-  Ì«ÑôÉñÈý¹úÉ±ÖÐÉùÒôºÜÁ÷³©ÁÁÀö.ÊµÏÖ²ÉÓÃ¿ªÔ´¿çÆ½Ì¨µÄÓÎÏ·ÉùÒôÒýÇæfmod,ÏêÏ¸ÄÚÈÝÇë²Î¼û:http://baike.baidu.com/view/656662.htm.ÄÚ²¿½«fmod²Ù×÷·â×°ÔÚSoundÀàÖÐ,Õâ¸öÀàºÜ¼òµ¥,ÊýÐÐ´úÂë¶øÒÑ.
+å£°éŸ³
+
+  å¤ªé˜³ç¥žä¸‰å›½æ€ä¸­å£°éŸ³å¾ˆæµç•…äº®ä¸½.å®žçŽ°é‡‡ç”¨å¼€æºè·¨å¹³å°çš„æ¸¸æˆå£°éŸ³å¼•æ“Žfmod,è¯¦ç»†å†…å®¹è¯·å‚è§:http://baike.baidu.com/view/656662.htm.å†…éƒ¨å°†fmodæ“ä½œå°è£…åœ¨Soundç±»ä¸­,è¿™ä¸ªç±»å¾ˆç®€å•,æ•°è¡Œä»£ç è€Œå·².
 
 class Sound;
 
@@ -48,7 +50,7 @@ private:
     FMOD_CHANNEL *channel;
 };
 
-ÔÚÏîÄ¿Æô¶¯Ê±³õÊ¼»¯fmod:
+åœ¨é¡¹ç›®å¯åŠ¨æ—¶åˆå§‹åŒ–fmod:
 
     FMOD_RESULT result = FMOD_System_Create(&System);
 
@@ -56,7 +58,7 @@ private:
 	FMOD_System_Init(System, 100, 0, NULL);
     }
 
-ÔÚÏîÄ¿½áÊøÊ±ÊÍ·Åfmod:
+åœ¨é¡¹ç›®ç»“æŸæ—¶é‡Šæ”¾fmod:
 
     if(System){
 	SoundCache.clear();
@@ -65,5 +67,5 @@ private:
 	System = NULL;
     }
 
-×¢Òâ,fmodÐèÒª6¸öÍ·ÎÄ¼þ:fmod.h,fmod_codec.h,fmod_dsp.h,fmod_errors.h,fmod_memoryinfo.h,fmod_output.h,ÒÔ¼°Ò»¸ölibÎÄ¼þfmodex.lib,Ò»¸ödllÎÄ¼þfmodex.dll.
-¿ÉÒÔÖ±½Ó½«ÉÏÃæµÄÀàºÍ8¸öÎÄ¼þÒÆÖ²µ½×Ô¼ºµÄÏîÄ¿ÖÐÊ¹ÓÃ,²âÊÔÍ¨¹ý.Î¨Ò»ÐèÒª×¢ÒâµÄÊÇSound¶ÔÏóµÄÎö¹¹º¯ÊýÖÐ»á½áÊøÒôÆµ²¥·Å,Òò´ËÈç¹ûÉùÃ÷ÁËÒ»¸öÁÙÊ±±äÁ¿,ÐèÒªµÈ´ýÉùÒô²¥·ÅÍê±Ï²ÅÄÜÌø³öSound¶ÔÏóµÄ×÷ÓÃÓò,·ñÔòÉùÒôÎ´µÈ²¥·ÅÒÑ¾­½áÊøÁË.
+æ³¨æ„,fmodéœ€è¦6ä¸ªå¤´æ–‡ä»¶:fmod.h,fmod_codec.h,fmod_dsp.h,fmod_errors.h,fmod_memoryinfo.h,fmod_output.h,ä»¥åŠä¸€ä¸ªlibæ–‡ä»¶fmodex.lib,ä¸€ä¸ªdllæ–‡ä»¶fmodex.dll.
+å¯ä»¥ç›´æŽ¥å°†ä¸Šé¢çš„ç±»å’Œ8ä¸ªæ–‡ä»¶ç§»æ¤åˆ°è‡ªå·±çš„é¡¹ç›®ä¸­ä½¿ç”¨,æµ‹è¯•é€šè¿‡.å”¯ä¸€éœ€è¦æ³¨æ„çš„æ˜¯Soundå¯¹è±¡çš„æžæž„å‡½æ•°ä¸­ä¼šç»“æŸéŸ³é¢‘æ’­æ”¾,å› æ­¤å¦‚æžœå£°æ˜Žäº†ä¸€ä¸ªä¸´æ—¶å˜é‡,éœ€è¦ç­‰å¾…å£°éŸ³æ’­æ”¾å®Œæ¯•æ‰èƒ½è·³å‡ºSoundå¯¹è±¡çš„ä½œç”¨åŸŸ,å¦åˆ™å£°éŸ³æœªç­‰æ’­æ”¾å·²ç»ç»“æŸäº†.

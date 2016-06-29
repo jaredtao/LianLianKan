@@ -167,7 +167,6 @@ bool Game::link(int startX, int startY, int endX, int endY)
 		if (isWin()) {
 			setState(WIN);
 			pauseGame(true);
-
 		} else {
 			if (needRandom())
 				random();
