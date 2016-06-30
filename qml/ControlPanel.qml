@@ -1,5 +1,5 @@
 import QtQuick 2.0
-
+import Game 1.0
 Item {
 	id:controlPanel
 	width:180
@@ -103,7 +103,7 @@ Item {
 				anchors.bottomMargin: 10
 				anchors.horizontalCenter: parent.horizontalCenter
 				text:"Hint"
-				opacity:game.state != game.PAUSE
+				opacity:game.state != Game.PAUSE
 				disabled: game.tip <=0
 				onClicked: {
 					game.getTip();

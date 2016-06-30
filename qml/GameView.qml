@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import GameCore 1.0
+
 Item {
 	id:gameView
 	anchors.fill: parent
