@@ -1,5 +1,5 @@
 import QtQuick 2.0
-
+import Game 1.0
 Item {
 	id:tile
 	width:60
@@ -34,7 +34,7 @@ Item {
 				return 0.6
 		}
 		Behavior on opacity {
-			enabled: game.state == game.PLAYING
+			enabled: game.state == Game.PLAYING
 			NumberAnimation {
 				properties:"opacity"
 				duration: 500
@@ -58,7 +58,7 @@ Item {
 		opacity:modelData.value > 0
 
 		Behavior on opacity {
-			enabled: game.state == game.PLAYING
+			enabled: game.state == Game.PLAYING
 			NumberAnimation {
 				properties: "opacity"
 				duration: 1500
@@ -70,12 +70,12 @@ Item {
 		enabled: ((modelData.value > 0) && (!modelData.selected) && (!modelData.tiped))
 		onClicked: {
 			var ret = game.flip(index)
-			if (ret == -1) {
+			if (ret == Game.DONOT) {
 				music.playSelected()
-			} else if (ret == 1) {
+			} else if (ret == Game.CLICK) {
 				music.playSelected2()
 				modelData.selected = true
-			} else if (ret == 0) {
+			} else if (ret == Game.LINKED) {
 				music.playLink()
 			}
 		}

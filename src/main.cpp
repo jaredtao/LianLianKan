@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
 	QQuickView view;
 
 	qmlRegisterType<Tile>("GameCore", 1, 0, "Tile");
+	qmlRegisterType<Game>("Game", 1, 0, "Game");
 	view.rootContext()->setContextProperty("mainWidget", &view);
 	view.rootContext()->setContextProperty("game", &game);
 	view.rootContext()->setContextProperty("music", &music);
