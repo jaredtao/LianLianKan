@@ -32,17 +32,17 @@ public:
 	static const int MAXH = 15;
 
 	enum GameState{
-		READY = 0,		//×Œ±ž
-		PLAYING,	//ÓÎÏ·ÖÐ
-		PAUSE,		//ÔÝÍ£
-		WIN,		//Ê€Àû
-		LOSE		//Ê§°Ü
+		READY = 0,
+		PLAYING,
+		PAUSE,
+		WIN,
+		LOSE
 	};
 
 	enum GameDifficulty {
-		EASY = 0,		//Œòµ¥
-		MIDDLE,		//ÖÐµÈ
-		HARD		//ŽóÊŠ
+		EASY = 0,
+		MIDDLE,
+		HARD
 	};
 
 	enum FlipState {
@@ -51,14 +51,15 @@ public:
 		CLICK
 	};
 
-
 public:
+	// Open for ui control game
 	Q_INVOKABLE bool startGame();
 	Q_INVOKABLE bool reStart();
 	Q_INVOKABLE void pauseGame(bool);
 	Q_INVOKABLE FlipState flip(int index);
 	Q_INVOKABLE bool getTip();
 
+	//Property Read-Write
 	enum GameState state() const;
 	void setState(GameState value);
 	enum GameDifficulty difficulty() const;
@@ -73,16 +74,12 @@ public:
 	void setW(int value);
 	int h() const;
 	void setH(int value);
-
 	int gametime() const;
 	void setGametime(int value);
 
 	QQmlListProperty<Tile> tiles();
+	//Property Read_Write end
 
-	Q_INVOKABLE void upParams()
-	{
-		emit paramsChanged();
-	}
 signals:
 	void stateChanged();
 	void difficultyChanged();
@@ -92,7 +89,6 @@ signals:
 	void wChanged();
 	void hChanged();
 	void gametimeChanged();
-	void paramsChanged();
 public slots:
 	void timeout();
 private:
@@ -107,22 +103,20 @@ private:
 	void random();
 	bool needRandom();
 	void initTiles();
-	int map[MAXW][MAXH];		//±£ŽæµØÍŒ,  0±íÊŸ¿Õ°×£¬ Êý×Ö1-25±íÊŸÍŒÆ¬
+	int map[MAXW][MAXH];
 	QList<QPoint> pathPoint;
 	QList<Tile *> m_tiles;
 	QPoint start, end;
+	Tile *first, *second;
 	int clicked;
-	//ÄÜ²»ÄÜÁ¬
+
 	bool canLink(int startX, int startY, int endX, int endY);
 
-	//ÄÜË®Æœ»òÕßŽ¹Ö± Ö±Á¬
 	bool canVerOrHorLink(int startX, int startY, int endX, int endY);
 	bool canVerticalLink(int X, int startY, int endY);
 	bool canHorizontalLink(int Y, int startX, int endX);
 
-	//ÄÜÒ»žö¹ÕÍäÁ¬
 	bool canOneConnerLink(int startX, int startY, int endX, int endY);
-	//ÄÜÁœžö¹ÕÍäÁ¬
 	bool canDoubleConnerLink(int startX, int startY, int endX, int endY);
 	GamePrivate *m_dptr;
 };

@@ -52,16 +52,21 @@ Item {
 			PropertyAnimation {target:tilebackImg; properties:"flicker"; to: 0;}
 		}
 	}
+
 	Image {
 		anchors.fill: parent
 		source:"qrc:/Images/Images/" + modelData.value + ".png"
-		opacity:modelData.value > 0
-
+		opacity: {
+			if (modelData.value > 0)
+				return 1.0
+			else
+				return 0.0
+		}
 		Behavior on opacity {
 			enabled: game.state == Game.PLAYING
 			NumberAnimation {
 				properties: "opacity"
-				duration: 1500
+				duration: 500
 			}
 		}
 	}

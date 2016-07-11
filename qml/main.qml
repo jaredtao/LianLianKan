@@ -1,12 +1,13 @@
-import QtQuick 2.7
+import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 
 Rectangle {
 	id:root
 	visible: true
-	width: 800
-	height: 600
+	width: Qt.platform.os === "android"? Screen.width: 800
+	height: Qt.platform.os === "android"? Screen.height: 600
+
 
 	// *** Game View ***
 	GameView {
@@ -39,7 +40,6 @@ Rectangle {
 	}
 	ResultPanel {
 		id:resultPanel
-		state: "hide"
 	}
 	// *** Main Menu panel ***
 	MenuPanel {

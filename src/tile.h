@@ -48,10 +48,8 @@ public:
 	}
 	void setTiped(bool v)
 	{
-		qDebug()<<__FUNCTION__;
 		if (v == m_tiped) return ;
 		m_tiped = v;
-		qDebug()<<__FUNCTION__<<v;
 		emit tipedChanged();
 	}
 signals:
@@ -59,8 +57,8 @@ signals:
 	void selectedChanged();
 	void tipedChanged();
 private:
-	  int m_value;
-	  bool m_selected;
-	  bool m_tiped;
+	int m_value;
+	bool m_selected;
+	bool m_tiped;
 };
 #endif // TILE_H

@@ -30,12 +30,16 @@ public:
 	int gametime;
 	QTimer timer;
 	int defaultTime;
-	int scorePerLink;			//Ã¿Á¬Ò»žöµÄµÃ·Ö
+	int scorePerLink;
 	int useImage;
 };
 
-Game::Game(QObject *parent): QObject(parent), m_dptr(new GamePrivate)
+Game::Game(QObject *parent): QObject(parent), first(0), second(0), m_dptr(new GamePrivate)
 {
+	for (int i = 0; i < w() * h(); ++i) {
+		m_tiles << new Tile;
+	}
+
 	initData();
 	memset(map, 0, sizeof(map));
 	qsrand(time(0));
@@ -59,16 +63,19 @@ void Game::initData()
 }
 void Game::initTiles()
 {
-	m_tiles.clear();
-	for (int i = 0; i < w() * h(); ++i) {
-		m_tiles << new Tile;
+	int less = w() * h() - m_tiles.count();
+	if (less >0) {
+		for (int i = 0; i < less; ++i) {
+			m_tiles << new Tile;
+		}
 	}
+
 	int index = 1;
 	for (int i = 0; i < m_tiles.size(); i+=2 ) {
 		m_tiles[i]->setValue(index);
 		m_tiles[i+1]->setValue(index);
 		++index;
-		if(index > m_dptr->useImage)
+		if(index >= m_dptr->useImage)
 			index = index % (m_dptr->useImage) + 1;
 	}
 
@@ -83,6 +90,7 @@ void Game::initTiles()
 			map[i][j] = m_tiles[ (i - 1) * w() + j - 1]->value();
 		}
 	}
+
 }
 Game::~Game()
 {
@@ -95,6 +103,9 @@ void Game::timeout()
 	if (gametime() == 0) {
 		if (!isWin())
 			setState(LOSE);
+		else
+			setState(WIN);
+		m_dptr->timer.stop();
 	}
 	if(needRandom())
 		random();
@@ -103,9 +114,13 @@ bool Game::startGame()
 {
 	if (state() == PLAYING)
 		return false;
+	if (state() == PAUSE) {
+		pauseGame(false);
+		return true;
+	}
 	if (state() == WIN) {
-		setW((w() + 2) > MAXW ? w() + 2 : MAXW);
-		setH((h() + 2) % MAXH ? h() + 2 : MAXH);
+//		setW((w() + 2) > MAXW ? w() + 2 : MAXW);
+//		setH((h() + 2) % MAXH ? h() + 2 : MAXH);
 		setLevel(level() + 1);
 		m_dptr->defaultTime -= 5;
 		m_dptr->useImage++;
@@ -115,9 +130,15 @@ bool Game::startGame()
 		if (m_dptr->defaultTime <30)
 			m_dptr->defaultTime = 30;
 		setGametime(m_dptr->defaultTime);
-	} else if (state() == LOSE) {
+		setTip(3);
+		setTip(3);
+		m_dptr->scorePerLink += 10;
+
+	} else if (state() == LOSE || state() == READY) {
 		initData();
 	}
+	//default state is READY
+
 	start = end =  QPoint(0, 0);
 	clicked = 0;
 	setState(PLAYING);
@@ -161,21 +182,10 @@ bool Game::link(int startX, int startY, int endX, int endY)
 	if (canLink(startX, startY, endX, endY)) {
 		map[startX][startY] = 0;
 		map[endX][endY] = 0;
-		m_tiles[(startX - 1) * h() + startY - 1 ]->init();
-		m_tiles[(endX -1) * h() + endY - 1]->init();
-		setScore(score() + m_dptr->scorePerLink);
-		if (isWin()) {
-			setState(WIN);
-			pauseGame(true);
-		} else {
-			if (needRandom())
-				random();
-		}
 		return true;
+	} else {
+		return false;
 	}
-	m_tiles[(startX - 1) * h() + startY - 1 ]->setSelected(false);
-	m_tiles[(endX -1) * h() + endY - 1]->setSelected(false);
-	return false;
 }
 bool Game::getTip()
 {
@@ -188,8 +198,8 @@ bool Game::getTip()
 		m_tiles[ (x2 - 1) * h() + y2 - 1 ]->setTiped(true);
 		setTip(tip() - 1);
 		return true;
-	}
-	return false;
+	} else
+		return false;
 }
 bool Game::tip(int &startX, int &startY, int &endX, int &endY)
 {
@@ -222,13 +232,27 @@ enum Game::FlipState Game::flip(int index)
 	if (clicked == 1) {
 		start.setX (index / h() + 1);
 		start.setY (index % h() + 1);
+		first = t;
 		return CLICK;
 	} else {
 		end.setX (index / h() + 1);
 		end.setY (index % h() + 1);
-		link(start.x(), start.y(), end.x(), end.y());
+		second = t;
+		if (link(start.x(), start.y(), end.x(), end.y())) {
+			first->setValue(0);
+			second->setValue(0);
+			setScore(score() + m_dptr->scorePerLink);
+		}
+		first->setSelected(false);
+		second->setSelected(false);
+		if (isWin()) {
+			setState(WIN);
+			m_dptr->timer.stop();
+		}
 		clicked = 0;
 		start = end =  QPoint(0, 0);
+		first = 0;
+		second = 0;
 		return LINKED;
 	}
 }
@@ -366,7 +390,6 @@ void Game::setState (GameState value)
 	if ( m_dptr->state != value) {
 		m_dptr->state = value;
 		emit stateChanged();
-		emit paramsChanged();
 	}
 }
 enum Game::GameDifficulty Game::difficulty () const
@@ -378,7 +401,6 @@ void Game::setDifficulty (GameDifficulty value)
 	if ( m_dptr->difficulty != value) {
 		m_dptr->difficulty = value;
 		emit difficultyChanged();
-		emit paramsChanged();
 	}
 }
 int Game::level () const
@@ -390,7 +412,6 @@ void Game::setLevel (int value)
 	if ( m_dptr->level != value) {
 		m_dptr->level = value;
 		emit levelChanged();
-		emit paramsChanged();
 	}
 }
 int Game::score () const
@@ -402,7 +423,6 @@ void Game::setScore (int value)
 	if ( m_dptr->score != value) {
 		m_dptr->score = value;
 		emit scoreChanged();
-		emit paramsChanged();
 	}
 }
 int Game::tip () const
@@ -414,7 +434,6 @@ void Game::setTip (int value)
 	if ( m_dptr->tip != value) {
 		m_dptr->tip = value;
 		emit tipChanged();
-		emit paramsChanged();
 	}
 }
 int Game::w () const
@@ -426,7 +445,6 @@ void Game::setW (int value)
 	if ( m_dptr->w != value) {
 		m_dptr->w = value;
 		emit wChanged();
-		emit paramsChanged();
 	}
 }
 int Game::h () const
@@ -438,7 +456,6 @@ void Game::setH (int value)
 	if ( m_dptr->h != value) {
 		m_dptr->h = value;
 		emit hChanged();
-		emit paramsChanged();
 	}
 }
 

@@ -6,48 +6,14 @@ Rectangle {
 	y:0
 	width:parent.width
 	height:parent.height
-	color:"red"
-//	opacity:  game.state == Game.PLAYING || game.state == Game.READY
-	Item {
-		id:minimizeButton
-		width:80
-		height:80
-		anchors.top: parent.top
-		anchors.left: parent.left
-		Image {
-			source: "qrc:/Images/Images/minimize.png"
-			anchors.centerIn: parent
-		}
-		MouseArea {
-			anchors.fill: parent
-			onClicked: {
-				mainWidget.showMinimized()
-			}
-		}
-	}
-	Item {
-		id:closeButton
-		width:80
-		height:80
-		anchors.top: parent.top
-		anchors.right: parent.right
-		Image {
-			source: "qrc:/Images/Images/close.png"
-			anchors.centerIn: parent
-		}
-		MouseArea {
-			anchors.fill: parent
-			onClicked: {
-				mainWidget.close()
-			}
-		}
-	}
+	color:"gray"
+	opacity:  0
 	Frame {
 		id:boxWin
 		width:300
 		height:200
 		anchors.centerIn: parent
-		opacity: resultPanel.opacity
+		opacity: resultPanel.state != "Lose"
 		Text {
 			id: textWin
 			anchors.horizontalCenter: parent.horizontalCenter
@@ -62,7 +28,7 @@ Rectangle {
 		Button {
 			width:120
 			anchors.top: textWin.bottom
-			anchors.topMargin: 20
+			anchors.topMargin: 50
 			anchors.horizontalCenter: parent.horizontalCenter
 			text:"Next"
 			onClicked: {
@@ -75,7 +41,7 @@ Rectangle {
 		width:300
 		height:200
 		anchors.centerIn: parent
-		opacity: resultPanel.opacity
+		opacity: resultPanel.state != "Win"
 		Text {
 			id: textLose
 			anchors.horizontalCenter: parent.horizontalCenter
@@ -90,7 +56,7 @@ Rectangle {
 		Button {
 			width:120
 			anchors.top: textLose.bottom
-			anchors.topMargin: 20
+			anchors.topMargin: 50
 			anchors.horizontalCenter: parent.horizontalCenter
 			text:"Restart"
 			onClicked: {
@@ -98,44 +64,63 @@ Rectangle {
 			}
 		}
 	}
-	Rectangle {
-		id:gameResultHider
-		anchors.fill: parent
-		color:"black"
-		opacity: 0.7
-		states: [
-			State{
-				name:"hide"
-				when: resultPanel.state == "hide"
-				PropertyChanges {
-					target: gameResultHider
-					opacity: 0.0
-				}
-			}
-		]
-		transitions: Transition {
-			NumberAnimation {
-				properties:"opacity"
-				duration: 400
-			}
-		}
-	}
+//	Rectangle {
+//		id:gameResultHider
+//		anchors.fill: parent
+//		color:"black"
+//		opacity: 0.7
+//		states: [
+//			State{
+//				name:"hide"
+//				when: resultPanel.state == "hide"
+//				PropertyChanges {
+//					target: gameResultHider
+//					opacity: 0.0
+//				}
+//			}
+//		]
+//		transitions: Transition {
+//			NumberAnimation {
+//				properties:"opacity"
+//				duration: 400
+//			}
+//		}
+//	}
 
 	states: [
 		State {
-			name:"hide"
-			when: game.state == Game.READY || Game.state == Game.PLAYING
+			name:"Hide"
+			when: game.state == Game.READY || game.state == Game.PLAYING
 			PropertyChanges {
 				target: resultPanel
 				opacity:0
 				y: -resultPanel.height
 			}
+		},
+		State {
+			name:"Lose"
+			when: game.state == Game.LOSE
+			PropertyChanges {
+				target: resultPanel
+				opacity: 0.7
+				y:0
+			}
+		},
+		State {
+			name:"Win"
+			when: game.state == Game.WIN
+			PropertyChanges {
+				target: resultPanel
+				opacity: 0.7
+				y:0
+			}
 		}
+
 	]
 	transitions: Transition {
 		NumberAnimation {
 			properties: "opacity, y"
-			duration:400
+			duration:1000
 		}
 	}
 }

@@ -1,7 +1,7 @@
 QT += qml quick
 
 CONFIG += c++11
-CONFIG += audio
+#CONFIG += audio
 
 RESOURCES += qml.qrc \
     Images.qrc \
@@ -23,20 +23,14 @@ INCLUDEPATH += src
 
 
 DISTFILES += \
-    Readme.txt
-
-unix:!android {
-    isEmpty(target.path) {
-	qnx {
-	    target.path = /tmp/$${TARGET}/bin
-	} else {
-	    target.path = /opt/$${TARGET}/bin
-	}
-	export(target.path)
-    }
-    INSTALLS += target
-}
-
+    Readme.txt \
+    android/AndroidManifest.xml \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradlew \
+    android/res/values/libs.xml \
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew.bat
 
 HEADERS += \
     $$PWD/src/game.h \
@@ -54,14 +48,36 @@ win32-g++{
     LIBS += -L"$$_PRO_FILE_PWD_/lib/win/MinGW"
 }
 linux {
-    DEFINES += LINUX
-    LIBS += -L"$$_PRO_FILE_PWD_/lib/linux/x64"
+    android{
+	DEFINES += ANDROID
+	ANDROID_LIBPATH = $$_PRO_FILE_PWD_/lib/android/$$ANDROID_ARCHITECTURE/lib
+	LIBS += -L"$$ANDROID_LIBPATH"
+    } else {
+	DEFINES += LINUX
+	!contains(QMAKE_HOST.arch, x86_64) {
+	    LIBS += -L"$$_PRO_FILE_PWD_/lib/linux/x86"
+	    QMAKE_LFLAGS += -Wl,--rpath=lib/linux/x86
+	}
+	else {
+	    LIBS += -L"$$_PRO_FILE_PWD_/lib/linux/x64"
+	    QMAKE_LFLAGS += -Wl,--rpath=lib/linux/x64
+	}
+    }
 }
 CONFIG(audio) {
-    DEFINES += AUDIO_SUPPORT
-    INCLUDEPATH += include/fmod
-    SOURCES +=	src/audio.cpp
-    CONFIG(debug, debug|release): LIBS+= -lfmodexL
-    else:LIBS += -lfmodex
 
+    INCLUDEPATH += include/fmod
+
+    android {
+#	CONFIG(debug, debug|release):ANDROID_EXTRA_LIBS += $$ANDROID_LIBPATH/libfmodexL.so
+#	else:ANDROID_EXTRA_LIBS += $$ANDROID_LIBPATH/libfmodex.so
+    } else {
+	DEFINES += AUDIO_SUPPORT
+	CONFIG(debug, debug|release): LIBS+= -lfmodexL
+	else:LIBS += -lfmodex
+
+	SOURCES +=	src/audio.cpp
+    }
 }
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

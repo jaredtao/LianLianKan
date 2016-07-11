@@ -1,5 +1,5 @@
 import QtQuick 2.0
-
+import Game 1.0
 Item {
 	id: menuPanel
 	width:parent.width
@@ -187,16 +187,13 @@ Item {
 				}
 				Button {
 					id:buttonContinue
-					text: "Continue Game"
-					//					disabled: {
-					//						if(game.state != game.PAUSE )
-					//							return false
-					//						else
-					//							return true
-					//					}
+					text: game.state == Game.PAUSE ? "Continue" : "Start"
 					onClicked: {
 						menuPanel.state = "hide"
-						game.pauseGame(false)
+						if (game.state == Game.PAUSE)
+							game.pauseGame(false)
+						else
+							game.startGame()
 						music.playBGM()
 					}
 				}
