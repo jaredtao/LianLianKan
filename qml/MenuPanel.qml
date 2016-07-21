@@ -94,11 +94,11 @@ Item {
 						horizontalAlignment: Text.AlignHCenter
 						font.family: "Helvetica"
 						font.pointSize: 15
-						text: "\nThis game is the classical Lian-Lian-Kan, also" + "know as chinese chess. Player click the two same picture can remove them, and if you remove all pictures in some time, you will win the game." + "\nGame logic is implemented with Qt " + "C++ and the UI with QML Declarative UI.\nEnjoy! =)\n"
+						text: "\nThis game is the classical Lian-Lian-Kan, also" + "know as chinese chess. Player click the two same picture can remove them, and if you remove all pictures in some time, you will win the game." + "\nGame logic is implemented with Qt " + "C++ and the UI with QML Declarative UI.\nEnjoy! =)\n\n\n\n\n\n"
 					}
 					Image {
 						id:aboutAreaLogo
-						source:"qrc:/Images/Images/quit.png"
+						source:"qrc:/Images/Images/s.jpg"
 						anchors.horizontalCenter: parent.horizontalCenter
 						anchors.top:aboutAreatext.bottom
 						anchors.topMargin: 10
